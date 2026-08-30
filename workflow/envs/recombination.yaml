@@ -1,0 +1,7 @@
+channels:
+  - conda-forge
+  - bioconda
+dependencies:
+  - python>=3.11
+  - gubbins>=3
+  - biopython>=1.80

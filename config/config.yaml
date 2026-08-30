@@ -1,0 +1,46 @@
+samples: config/samples.example.tsv
+
+reference:
+  mode: auto
+  sample: null
+  path: null
+  max_contigs: 500
+  length_tolerance_fraction: 0.25
+
+recombination:
+  enabled: true
+
+accessory:
+  enabled: true
+  clean_mode: strict
+  core_threshold: 0.95
+
+functional:
+  enabled: false
+  databases:
+    - resfinder
+    - vfdb
+
+integration:
+  low_snp_threshold: 10
+  high_accessory_distance: 0.25
+
+phylogeny:
+  model: MFP
+  bootstrap: 1000
+  alrt: 1000
+  seed: 20260830
+
+temporal:
+  mode: screen
+  min_dated_samples: 10
+  min_year_span: 1.0
+  min_r2: 0.10
+  coalescent: skyline
+
+resources:
+  snippy_threads: 4
+  iqtree_threads: 4
+  gubbins_threads: 4
+  prokka_threads: 4
+  panaroo_threads: 4

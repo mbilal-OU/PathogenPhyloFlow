@@ -1,0 +1,88 @@
+import csv
+import re
+
+from snakemake.utils import validate
+
+configfile: "config/config.yaml"
+validate(config, "config/config.schema.yaml")
+
+
+def load_samples(path):
+    with open(path, newline="", encoding="utf-8") as handle:
+        rows = list(csv.DictReader(handle, delimiter="\t"))
+    required = {"sample", "assembly", "accession", "date", "location", "host"}
+    if not rows:
+        raise ValueError(f"Sample sheet {path} has no sample rows")
+    missing = required - set(rows[0])
+    if missing:
+        raise ValueError(f"Sample sheet is missing columns: {sorted(missing)}")
+    seen = set()
+    for row in rows:
+        sample = row["sample"].strip()
+        if not re.fullmatch(r"[A-Za-z0-9_.-]+", sample):
+            raise ValueError(f"Unsafe sample identifier: {sample!r}")
+        if sample in seen:
+            raise ValueError(f"Duplicate sample identifier: {sample}")
+        seen.add(sample)
+        has_assembly = bool(row["assembly"].strip())
+        has_accession = bool(row["accession"].strip())
+        if has_assembly == has_accession:
+            raise ValueError(
+                f"Sample {sample} must provide exactly one of assembly or accession"
+            )
+    if len(rows) < 2:
+        raise ValueError("At least two samples are required")
+    return rows
+
+
+SAMPLE_ROWS = load_samples(config["samples"])
+SAMPLES = [row["sample"].strip() for row in SAMPLE_ROWS]
+SAMPLE_META = {row["sample"].strip(): row for row in SAMPLE_ROWS}
+
+RECOMBINATION_ENABLED = bool(config["recombination"]["enabled"])
+ACCESSORY_ENABLED = bool(config["accessory"]["enabled"])
+FUNCTIONAL_ENABLED = bool(config["functional"]["enabled"])
+
+REPORT_INPUTS = [
+    "results/reference/reference_selection.json",
+    "results/phylogeny/final.treefile",
+    "results/phylogeny/final.aln",
+    "results/phylogeny/final.snp_dist.tsv",
+    "results/temporal/temporal_screen.json",
+]
+
+if RECOMBINATION_ENABLED:
+    REPORT_INPUTS += [
+        "results/recombination/mask_summary.json",
+        "results/phylogeny/tree_comparison.json",
+    ]
+
+if ACCESSORY_ENABLED:
+    REPORT_INPUTS += [
+        "results/accessory/panaroo/gene_presence_absence.Rtab",
+        "results/integration/snp_accessory_discordance.tsv",
+        "results/integration/snp_accessory_summary.json",
+    ]
+
+if FUNCTIONAL_ENABLED:
+    REPORT_INPUTS += [
+        "results/functional/resfinder_summary.tsv",
+        "results/functional/vfdb_summary.tsv",
+    ]
+
+
+rule all:
+    input:
+        "results/report/index.html",
+        "results/report/summary.json",
+        "results/report/config.resolved.json",
+
+
+include: "rules/input.smk"
+include: "rules/reference.smk"
+include: "rules/variants.smk"
+include: "rules/recombination.smk"
+include: "rules/accessory.smk"
+include: "rules/functional.smk"
+include: "rules/temporal.smk"
+include: "rules/report.smk"
