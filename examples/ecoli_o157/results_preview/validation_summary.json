@@ -1,0 +1,31 @@
+{
+  "samples": 4,
+  "selected_reference": "EDL933",
+  "accessory_gene_families": 5756,
+  "recombination": {
+    "alignment_length": 5620522,
+    "masked_positions": 144481,
+    "masked_fraction": 0.025705975352467263,
+    "merged_intervals": 16
+  },
+  "tree_comparison": {
+    "normalized_robinson_foulds": 0.0,
+    "raw_total_branch_length": 0.00029264140000000003,
+    "filtered_total_branch_length": 0.00015462309999999998,
+    "branch_length_ratio_filtered_to_raw": 0.528370558642762
+  },
+  "snp_accessory_discordance": {
+    "pairs_compared": 6,
+    "flagged_pairs": 0,
+    "low_snp_threshold": 10,
+    "high_accessory_distance": 0.25
+  },
+  "temporal": {
+    "dated_samples": 4,
+    "sampling_span_years": 24.0,
+    "slope": -1.1806201550386975e-08,
+    "r2": 0.0015888894153827957,
+    "screen_passed": false,
+    "status": "screen_only"
+  }
+}

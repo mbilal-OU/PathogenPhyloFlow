@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns:xlink="http://www.w3.org/1999/xlink" width="634.533626pt" height="338.4pt" viewBox="0 0 634.533626 338.4" xmlns="http://www.w3.org/2000/svg" version="1.1">
+ <defs><style type="text/css">*{stroke-linejoin: round; stroke-linecap: butt}</style></defs>
+ <g id="figure_1"><g id="patch_1"><path d="M 0 338.4 L 634.533626 338.4 L 634.533626 0 L 0 0 z" style="fill: #ffffff"/></g><g id="axes_1">
+ <g id="patch_2"><path d="M 17.33472 185.4 L 128.81664 185.4 L 128.81664 114.12 L 17.33472 114.12 L 17.33472 185.4 z" style="fill: none; stroke: #000000; stroke-linejoin: miter"/></g>
+ <g id="patch_3"><path d="M 141.48504 185.4 L 252.96696 185.4 L 252.96696 114.12 L 141.48504 114.12 L 141.48504 185.4 z" style="fill: none; stroke: #000000; stroke-linejoin: miter"/></g>
+ <g id="patch_4"><path d="M 265.63536 185.4 L 377.11728 185.4 L 377.11728 114.12 L 265.63536 114.12 L 265.63536 185.4 z" style="fill: none; stroke: #000000; stroke-linejoin: miter"/></g>
+ <g id="patch_5"><path d="M 389.78568 185.4 L 501.2676 185.4 L 501.2676 114.12 L 389.78568 114.12 L 389.78568 185.4 z" style="fill: none; stroke: #000000; stroke-linejoin: miter"/></g>
+ <g id="patch_6"><path d="M 17.33472 295.56 L 128.81664 295.56 L 128.81664 224.28 L 17.33472 224.28 L 17.33472 295.56 z" style="fill: none; stroke: #000000; stroke-linejoin: miter"/></g>
+ <g id="patch_7"><path d="M 141.48504 295.56 L 252.96696 295.56 L 252.96696 224.28 L 141.48504 224.28 L 141.48504 295.56 z" style="fill: none; stroke: #000000; stroke-linejoin: miter"/></g>
+ <g id="patch_8"><path d="M 265.63536 295.56 L 377.11728 295.56 L 377.11728 224.28 L 265.63536 224.28 L 265.63536 295.56 z" style="fill: none; stroke: #000000; stroke-linejoin: miter"/></g>
+ <g id="patch_9"><path d="M 389.78568 295.56 L 501.2676 295.56 L 501.2676 224.28 L 389.78568 224.28 L 389.78568 295.56 z" style="fill: none; stroke: #000000; stroke-linejoin: miter"/></g>
+ <text style="font-weight: 700; font-size: 16px; font-family: 'DejaVu Sans'; text-anchor: start" x="17.33472" y="38.7975">PathogenPhyloFlow validation snapshot</text>
+ <text style="font-size: 10px; font-family: 'DejaVu Sans'; text-anchor: start" x="17.33472" y="55.298438">Four-genome E. coli O157:H7 CI panel • reproducible workflow validation</text>
+ <text style="font-size: 9px; font-family: 'DejaVu Sans'" x="24.93576" y="135.538594">Samples</text><text style="font-weight: 700; font-size: 16px; font-family: 'DejaVu Sans'" x="24.93576" y="170.0175">4</text>
+ <text style="font-size: 9px; font-family: 'DejaVu Sans'" x="149.08608" y="135.538594">Accessory gene families</text><text style="font-weight: 700; font-size: 16px; font-family: 'DejaVu Sans'" x="149.08608" y="170.0175">5,756</text>
+ <text style="font-size: 9px; font-family: 'DejaVu Sans'" x="273.2364" y="135.538594">Masked alignment</text><text style="font-weight: 700; font-size: 16px; font-family: 'DejaVu Sans'" x="273.2364" y="170.0175">2.57%</text>
+ <text style="font-size: 9px; font-family: 'DejaVu Sans'" x="397.38672" y="135.538594">Masked positions</text><text style="font-weight: 700; font-size: 16px; font-family: 'DejaVu Sans'" x="397.38672" y="170.0175">144,481</text>
+ <text style="font-size: 9px; font-family: 'DejaVu Sans'" x="24.93576" y="245.698594">Topology change</text><text style="font-weight: 700; font-size: 16px; font-family: 'DejaVu Sans'" x="24.93576" y="280.1775">none</text>
+ <text style="font-size: 9px; font-family: 'DejaVu Sans'" x="149.08608" y="245.698594">Filtered/raw tree length</text><text style="font-weight: 700; font-size: 16px; font-family: 'DejaVu Sans'" x="149.08608" y="280.1775">0.528</text>
+ <text style="font-size: 9px; font-family: 'DejaVu Sans'" x="273.2364" y="245.698594">Discordant pairs</text><text style="font-weight: 700; font-size: 16px; font-family: 'DejaVu Sans'" x="273.2364" y="280.1775">0</text>
+ <text style="font-size: 9px; font-family: 'DejaVu Sans'" x="397.38672" y="245.698594">Temporal screen</text><text style="font-weight: 700; font-size: 16px; font-family: 'DejaVu Sans'" x="397.38672" y="280.1775">not passed</text>
+ <text style="font-size: 9px; font-family: 'DejaVu Sans'" x="17.33472" y="311.508281">Reference selected automatically: EDL933. Validation results demonstrate workflow behavior and are not direct transmission evidence.</text>
+ </g></g></svg>
