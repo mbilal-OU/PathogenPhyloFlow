@@ -6,7 +6,10 @@ from workflow.lib.metrics import decimal_year, fasta_stats, jaccard_distance, li
 
 
 def test_n50():
-    assert n50([10, 9, 1]) == 9
+    # Total length is 20; the first 10-bp contig reaches 50% exactly.
+    assert n50([10, 9, 1]) == 10
+    # Here the first 9-bp contig is below 50%; the second 9-bp contig crosses it.
+    assert n50([9, 9, 2]) == 9
     assert n50([]) == 0
 
 

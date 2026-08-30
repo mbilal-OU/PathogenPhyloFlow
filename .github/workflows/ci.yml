@@ -20,7 +20,7 @@ jobs:
       - name: Compile Python sources
         run: python -m compileall workflow tests
       - name: Run unit tests
-        run: pytest -q
+        run: python -m pytest -q
 
   snakemake-dag:
     runs-on: ubuntu-latest

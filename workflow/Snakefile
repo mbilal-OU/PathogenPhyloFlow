@@ -4,7 +4,7 @@ import re
 from snakemake.utils import validate
 
 configfile: "config/config.yaml"
-validate(config, "config/config.schema.yaml")
+validate(config, "../config/config.schema.yaml")
 
 
 def load_samples(path):
