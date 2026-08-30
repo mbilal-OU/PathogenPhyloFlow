@@ -1,0 +1,82 @@
+name: Real-data smoke test
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "examples/ecoli_o157/**"
+      - "workflow/scripts/resolve_input.py"
+      - ".github/workflows/real-data-smoke.yml"
+  pull_request:
+    paths:
+      - "examples/ecoli_o157/**"
+      - "workflow/scripts/resolve_input.py"
+      - ".github/workflows/real-data-smoke.yml"
+  workflow_dispatch:
+
+jobs:
+  resolve-public-assemblies:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up NCBI Datasets
+        uses: mamba-org/setup-micromamba@v2
+        with:
+          environment-file: workflow/envs/input.yaml
+          environment-name: pathogenphyloflow-input
+          cache-environment: true
+
+      - name: Validate curated sample sheet
+        shell: bash -el {0}
+        run: |
+          python - <<'PY'
+          import csv
+          from pathlib import Path
+
+          path = Path("examples/ecoli_o157/samples.tsv")
+          with path.open(newline="", encoding="utf-8") as handle:
+              rows = list(csv.DictReader(handle, delimiter="\t"))
+
+          assert len(rows) == 10, f"Expected 10 isolates, found {len(rows)}"
+          samples = [r["sample"].strip() for r in rows]
+          assert len(samples) == len(set(samples)), "Duplicate sample identifiers"
+          for row in rows:
+              accession = row["accession"].strip()
+              assert accession.startswith(("GCA_", "GCF_")), accession
+              assert not row["assembly"].strip(), row["sample"]
+          print(f"Validated {len(rows)} curated O157:H7 accessions")
+          PY
+
+      - name: Resolve every NCBI assembly accession
+        shell: bash -el {0}
+        run: |
+          mkdir -p /tmp/pathogenphyloflow-smoke
+          tail -n +2 examples/ecoli_o157/samples.tsv | while IFS=$'\t' read -r sample assembly accession rest; do
+            echo "Checking ${sample}: ${accession}"
+            archive="/tmp/pathogenphyloflow-smoke/${sample}.zip"
+            outdir="/tmp/pathogenphyloflow-smoke/${sample}"
+            datasets download genome accession "${accession}" --include genome --filename "${archive}"
+            mkdir -p "${outdir}"
+            unzip -q "${archive}" -d "${outdir}"
+            count=$(find "${outdir}" -type f -name '*.fna' | wc -l)
+            if [ "${count}" -lt 1 ]; then
+              echo "No genome FASTA found for ${sample} (${accession})" >&2
+              exit 1
+            fi
+          done
+
+      - name: Record accession validation
+        shell: bash -el {0}
+        run: |
+          printf 'sample\taccession\tstatus\n' > accession_validation.tsv
+          tail -n +2 examples/ecoli_o157/samples.tsv | while IFS=$'\t' read -r sample assembly accession rest; do
+            printf '%s\t%s\tresolved\n' "${sample}" "${accession}" >> accession_validation.tsv
+          done
+          cat accession_validation.tsv
+
+      - name: Upload validation manifest
+        uses: actions/upload-artifact@v4
+        with:
+          name: ecoli-o157-accession-validation
+          path: accession_validation.tsv
