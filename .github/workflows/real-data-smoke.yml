@@ -51,29 +51,51 @@ jobs:
       - name: Resolve every NCBI assembly accession
         shell: bash -el {0}
         run: |
-          mkdir -p /tmp/pathogenphyloflow-smoke
-          tail -n +2 examples/ecoli_o157/samples.tsv | while IFS=$'\t' read -r sample assembly accession rest; do
-            echo "Checking ${sample}: ${accession}"
-            archive="/tmp/pathogenphyloflow-smoke/${sample}.zip"
-            outdir="/tmp/pathogenphyloflow-smoke/${sample}"
-            datasets download genome accession "${accession}" --include genome --filename "${archive}"
-            mkdir -p "${outdir}"
-            unzip -q "${archive}" -d "${outdir}"
-            count=$(find "${outdir}" -type f -name '*.fna' | wc -l)
-            if [ "${count}" -lt 1 ]; then
-              echo "No genome FASTA found for ${sample} (${accession})" >&2
-              exit 1
-            fi
-          done
+          python - <<'PY'
+          import csv
+          import subprocess
+          import zipfile
+          from pathlib import Path
 
-      - name: Record accession validation
+          root = Path("/tmp/pathogenphyloflow-smoke")
+          root.mkdir(parents=True, exist_ok=True)
+          manifest = []
+
+          with open("examples/ecoli_o157/samples.tsv", newline="", encoding="utf-8") as handle:
+              rows = list(csv.DictReader(handle, delimiter="\t"))
+
+          for row in rows:
+              sample = row["sample"].strip()
+              accession = row["accession"].strip()
+              print(f"Checking {sample}: {accession}", flush=True)
+              archive = root / f"{sample}.zip"
+              outdir = root / sample
+              subprocess.run(
+                  [
+                      "datasets", "download", "genome", "accession", accession,
+                      "--include", "genome", "--filename", str(archive),
+                  ],
+                  check=True,
+              )
+              outdir.mkdir(parents=True, exist_ok=True)
+              with zipfile.ZipFile(archive) as zf:
+                  zf.extractall(outdir)
+              fastas = list(outdir.rglob("*.fna"))
+              if not fastas:
+                  raise RuntimeError(f"No genome FASTA found for {sample} ({accession})")
+              manifest.append((sample, accession, "resolved"))
+
+          with open("accession_validation.tsv", "w", newline="", encoding="utf-8") as handle:
+              writer = csv.writer(handle, delimiter="\t")
+              writer.writerow(["sample", "accession", "status"])
+              writer.writerows(manifest)
+
+          print(f"Resolved {len(manifest)} public assemblies")
+          PY
+
+      - name: Show validation manifest
         shell: bash -el {0}
-        run: |
-          printf 'sample\taccession\tstatus\n' > accession_validation.tsv
-          tail -n +2 examples/ecoli_o157/samples.tsv | while IFS=$'\t' read -r sample assembly accession rest; do
-            printf '%s\t%s\tresolved\n' "${sample}" "${accession}" >> accession_validation.tsv
-          done
-          cat accession_validation.tsv
+        run: cat accession_validation.tsv
 
       - name: Upload validation manifest
         uses: actions/upload-artifact@v4
