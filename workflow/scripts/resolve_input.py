@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 import json
 import shutil
 import subprocess
@@ -8,8 +6,20 @@ import tempfile
 import zipfile
 from pathlib import Path
 
-sys.path.insert(0, str(Path(snakemake.scriptdir).parents[1]))
-from workflow.lib.metrics import fasta_stats
+
+def _bootstrap_project_package():
+    candidates = [Path.cwd(), *Path(__file__).resolve().parents]
+    for root in candidates:
+        if (root / "pathogenphyloflow" / "__init__.py").is_file():
+            root_text = str(root)
+            if root_text not in sys.path:
+                sys.path.insert(0, root_text)
+            return
+    raise RuntimeError("Could not locate the PathogenPhyloFlow package from the Snakemake wrapper")
+
+
+_bootstrap_project_package()
+from pathogenphyloflow.metrics import fasta_stats
 
 
 row = dict(snakemake.params.row)

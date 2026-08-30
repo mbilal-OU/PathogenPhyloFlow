@@ -2,9 +2,8 @@ name: pathogenphyloflow
 channels:
   - conda-forge
   - bioconda
-  - defaults
 dependencies:
-  - python>=3.11
+  - python=3.11
   - snakemake>=8
   - conda>=24
   - mamba

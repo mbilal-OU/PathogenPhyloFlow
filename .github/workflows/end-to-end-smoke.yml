@@ -6,6 +6,8 @@ on:
     paths:
       - "examples/ecoli_o157/ci_samples.tsv"
       - "examples/ecoli_o157/ci_config.yaml"
+      - "pathogenphyloflow/**"
+      - "pyproject.toml"
       - "workflow/**"
       - "environment.yaml"
       - ".github/workflows/end-to-end-smoke.yml"
@@ -13,6 +15,8 @@ on:
     paths:
       - "examples/ecoli_o157/ci_samples.tsv"
       - "examples/ecoli_o157/ci_config.yaml"
+      - "pathogenphyloflow/**"
+      - "pyproject.toml"
       - "workflow/**"
       - "environment.yaml"
       - ".github/workflows/end-to-end-smoke.yml"
@@ -32,18 +36,22 @@ jobs:
           environment-name: pathogenphyloflow
           cache-environment: true
 
-      - name: Cache rule environments
-        uses: actions/cache@v4
+      - name: Restore rule environments
+        id: rule-env-cache
+        uses: actions/cache/restore@v4
         with:
           path: .snakemake/conda
           key: ${{ runner.os }}-pathogenphyloflow-${{ hashFiles('workflow/envs/*.yaml') }}
 
-      - name: Check deployment tools
+      - name: Check deployment tools and package
         shell: bash -el {0}
         run: |
           snakemake --version
           conda --version
           mamba --version
+          conda config --set channel_priority strict
+          python -m pip install -e . --no-deps
+          python -c "import pathogenphyloflow; print(pathogenphyloflow.__version__)"
 
       - name: Build rule environments
         shell: bash -el {0}
@@ -53,8 +61,14 @@ jobs:
             --configfile examples/ecoli_o157/ci_config.yaml \
             --cores 4 \
             --use-conda \
-            --conda-frontend mamba \
             --conda-create-envs-only
+
+      - name: Save rule environments
+        if: steps.rule-env-cache.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v4
+        with:
+          path: .snakemake/conda
+          key: ${{ runner.os }}-pathogenphyloflow-${{ hashFiles('workflow/envs/*.yaml') }}
 
       - name: Run integrated workflow
         shell: bash -el {0}
@@ -64,7 +78,6 @@ jobs:
             --configfile examples/ecoli_o157/ci_config.yaml \
             --cores 4 \
             --use-conda \
-            --conda-frontend mamba \
             --printshellcmds \
             --show-failed-logs \
             --rerun-incomplete

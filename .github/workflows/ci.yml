@@ -13,12 +13,13 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
-      - name: Install test dependencies
+      - name: Install package and test dependencies
         run: |
           python -m pip install --upgrade pip
+          pip install -e .
           pip install pytest pyyaml jsonschema
       - name: Compile Python sources
-        run: python -m compileall workflow tests
+        run: python -m compileall pathogenphyloflow workflow tests
       - name: Run unit tests
         run: python -m pytest -q
 
