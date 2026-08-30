@@ -7,7 +7,7 @@ authors:
     given-names: Muhammad
 repository-code: "https://github.com/mbilal-OU/PathogenPhyloFlow"
 license: MIT
-version: 0.1.0-dev
+version: 0.1.0
 date-released: 2026-08-30
 keywords:
   - pathogen genomics
