@@ -2,6 +2,6 @@ channels:
   - conda-forge
   - bioconda
 dependencies:
-  - python>=3.11
+  - python=3.10
   - gubbins>=3
   - biopython>=1.80
