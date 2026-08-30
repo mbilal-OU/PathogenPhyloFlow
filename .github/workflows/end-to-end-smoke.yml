@@ -32,8 +32,9 @@ jobs:
           environment-name: pathogenphyloflow
           cache-environment: true
 
-      - name: Cache rule environments
-        uses: actions/cache@v4
+      - name: Restore rule environments
+        id: rule-env-cache
+        uses: actions/cache/restore@v4
         with:
           path: .snakemake/conda
           key: ${{ runner.os }}-pathogenphyloflow-${{ hashFiles('workflow/envs/*.yaml') }}
@@ -44,6 +45,7 @@ jobs:
           snakemake --version
           conda --version
           mamba --version
+          conda config --set channel_priority strict
 
       - name: Build rule environments
         shell: bash -el {0}
@@ -53,8 +55,14 @@ jobs:
             --configfile examples/ecoli_o157/ci_config.yaml \
             --cores 4 \
             --use-conda \
-            --conda-frontend mamba \
             --conda-create-envs-only
+
+      - name: Save rule environments
+        if: steps.rule-env-cache.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v4
+        with:
+          path: .snakemake/conda
+          key: ${{ runner.os }}-pathogenphyloflow-${{ hashFiles('workflow/envs/*.yaml') }}
 
       - name: Run integrated workflow
         shell: bash -el {0}
@@ -64,7 +72,6 @@ jobs:
             --configfile examples/ecoli_o157/ci_config.yaml \
             --cores 4 \
             --use-conda \
-            --conda-frontend mamba \
             --printshellcmds \
             --show-failed-logs \
             --rerun-incomplete
