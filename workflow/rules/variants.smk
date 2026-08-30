@@ -80,5 +80,5 @@ rule raw_iqtree:
         IQTREE=$(command -v iqtree2 || command -v iqtree)
         "$IQTREE" -s {input} -pre results/phylogeny/raw -m {params.model} \
           -B {params.bootstrap} --alrt {params.alrt} -T {threads} \
-          --seed {params.seed} --redo > {log} 2>&1
+          -seed {params.seed} --redo > {log} 2>&1
         """

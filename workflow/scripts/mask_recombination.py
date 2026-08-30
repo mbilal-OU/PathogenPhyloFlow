@@ -1,8 +1,10 @@
 from __future__ import annotations
 
 import json
+import sys
 from pathlib import Path
 
+sys.path.insert(0, str(Path(snakemake.scriptdir).parents[1]))
 from workflow.lib.metrics import read_fasta
 
 
