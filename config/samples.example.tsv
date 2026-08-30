@@ -1,0 +1,4 @@
+sample	assembly	accession	date	location	host
+isolate_001	data/isolate_001.fna		2025-01-12	Michigan	human
+isolate_002	data/isolate_002.fna		2025-02-03	Michigan	human
+isolate_003		GCF_REPLACE_ME	2025-02-21	Michigan	human

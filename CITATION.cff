@@ -1,0 +1,18 @@
+cff-version: 1.2.0
+title: PathogenPhyloFlow
+message: "If you use PathogenPhyloFlow, please cite the software version or commit used."
+type: software
+authors:
+  - family-names: Bilal
+    given-names: Muhammad
+repository-code: "https://github.com/mbilal-OU/PathogenPhyloFlow"
+license: MIT
+version: 0.1.0-dev
+date-released: 2026-08-30
+keywords:
+  - pathogen genomics
+  - genomic epidemiology
+  - phylogenomics
+  - recombination
+  - pangenome
+  - Snakemake
