@@ -1,6 +1,20 @@
 import json
+import sys
 from pathlib import Path
 
+
+def _bootstrap_project_package():
+    candidates = [Path.cwd(), *Path(__file__).resolve().parents]
+    for root in candidates:
+        if (root / "pathogenphyloflow" / "__init__.py").is_file():
+            root_text = str(root)
+            if root_text not in sys.path:
+                sys.path.insert(0, root_text)
+            return
+    raise RuntimeError("Could not locate the PathogenPhyloFlow package from the Snakemake wrapper")
+
+
+_bootstrap_project_package()
 from pathogenphyloflow.metrics import read_fasta
 
 
