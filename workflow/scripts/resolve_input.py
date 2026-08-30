@@ -70,6 +70,11 @@ else:
     source_value = accession
 
 stats = fasta_stats(out_fasta)
+user_metadata = {
+    key: (value or "").strip()
+    for key, value in row.items()
+    if key not in {"assembly", "accession"}
+}
 metadata = {
     "sample": sample,
     "source": source,
@@ -77,6 +82,7 @@ metadata = {
     "date": row.get("date", ""),
     "location": row.get("location", ""),
     "host": row.get("host", ""),
+    "metadata": user_metadata,
     "assembly_stats": stats,
 }
 out_meta.write_text(json.dumps(metadata, indent=2, sort_keys=True) + "\n", encoding="utf-8")
