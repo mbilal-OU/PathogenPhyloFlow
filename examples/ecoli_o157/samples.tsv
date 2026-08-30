@@ -1,0 +1,11 @@
+sample	assembly	accession	date	location	host	source	context
+EDL933		GCF_000006665.1	1982	United States	food	ground beef	1982 hamburger-associated outbreak reference strain
+Sakai		GCF_000008865.2	1996	Japan	human	clinical	1996 Sakai outbreak reference strain
+EC4115		GCF_000021125.1	2006	United States	human	clinical	2006 spinach-associated outbreak isolate
+TW14359		GCF_000022225.1	2006	United States	human	clinical	2006 spinach-associated outbreak isolate
+TW14588		GCF_000155125.1	2006	United States	food	lettuce	2006 lettuce-associated outbreak isolate
+Xuzhou21		GCF_000262125.1	1999	China	human	clinical	1999 Xuzhou HUS outbreak isolate
+SS17		GCF_000730345.1		United States	cattle	recto-anal junction	super-shedder cattle isolate
+SS52		GCF_000803705.1		United States	cattle	feces	super-shedder cattle isolate
+JEONG-1266		GCF_001558995.2		United States	cattle	recto-anal junction	super-shedder cattle isolate
+FRIK2069		GCF_001651925.1	2011	United States	cattle	cattle	cattle-associated O157:H7 isolate
