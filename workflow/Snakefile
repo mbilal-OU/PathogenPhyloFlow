@@ -1,7 +1,18 @@
 import csv
+import os
 import re
+from pathlib import Path
 
 from snakemake.utils import validate
+
+# Snakemake executes `script:` directives from temporary wrapper locations.
+# Export the repository root so every isolated rule environment can import the
+# PathogenPhyloFlow Python package without depending on temporary script paths.
+REPO_ROOT = str(Path(__file__).resolve().parent.parent)
+_existing_pythonpath = os.environ.get("PYTHONPATH", "")
+os.environ["PYTHONPATH"] = os.pathsep.join(
+    part for part in (REPO_ROOT, _existing_pythonpath) if part
+)
 
 configfile: "config/config.yaml"
 validate(config, "../config/config.schema.yaml")

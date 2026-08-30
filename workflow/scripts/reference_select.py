@@ -3,12 +3,10 @@ import json
 import shutil
 import statistics
 import subprocess
-import sys
 import tempfile
 from pathlib import Path
 
-sys.path.insert(0, str(Path(snakemake.scriptdir).parents[1]))
-from workflow.lib.metrics import fasta_stats
+from pathogenphyloflow.metrics import fasta_stats
 
 
 assemblies = [Path(p) for p in snakemake.input.assemblies]

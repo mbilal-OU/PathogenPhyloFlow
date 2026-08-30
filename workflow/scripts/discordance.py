@@ -1,11 +1,9 @@
 import csv
 import itertools
 import json
-import sys
 from pathlib import Path
 
-sys.path.insert(0, str(Path(snakemake.scriptdir).parents[1]))
-from workflow.lib.metrics import jaccard_distance
+from pathogenphyloflow.metrics import jaccard_distance
 
 
 def read_snp_matrix(path):

@@ -2,7 +2,7 @@ from pathlib import Path
 
 import pytest
 
-from workflow.lib.metrics import decimal_year, fasta_stats, jaccard_distance, linear_regression, n50
+from pathogenphyloflow.metrics import decimal_year, fasta_stats, jaccard_distance, linear_regression, n50
 
 
 def test_n50():

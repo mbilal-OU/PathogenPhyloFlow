@@ -1,13 +1,10 @@
 import csv
 import json
 import subprocess
-import sys
 from pathlib import Path
 
 from Bio import Phylo
-
-sys.path.insert(0, str(Path(snakemake.scriptdir).parents[1]))
-from workflow.lib.metrics import decimal_year, linear_regression
+from pathogenphyloflow.metrics import decimal_year, linear_regression
 
 
 settings = dict(snakemake.params.settings)

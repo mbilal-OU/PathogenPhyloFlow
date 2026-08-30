@@ -1,13 +1,11 @@
 import json
 import shutil
 import subprocess
-import sys
 import tempfile
 import zipfile
 from pathlib import Path
 
-sys.path.insert(0, str(Path(snakemake.scriptdir).parents[1]))
-from workflow.lib.metrics import fasta_stats
+from pathogenphyloflow.metrics import fasta_stats
 
 
 row = dict(snakemake.params.row)
