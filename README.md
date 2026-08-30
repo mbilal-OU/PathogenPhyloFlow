@@ -1,6 +1,7 @@
 # PathogenPhyloFlow
 
 [![CI](https://github.com/mbilal-OU/PathogenPhyloFlow/actions/workflows/ci.yml/badge.svg)](https://github.com/mbilal-OU/PathogenPhyloFlow/actions/workflows/ci.yml)
+[![Real-data smoke test](https://github.com/mbilal-OU/PathogenPhyloFlow/actions/workflows/real-data-smoke.yml/badge.svg)](https://github.com/mbilal-OU/PathogenPhyloFlow/actions/workflows/real-data-smoke.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
 **PathogenPhyloFlow** is a modular Snakemake workflow for integrated bacterial pathogen genomics. It combines clonal SNP phylogeny, recombination-aware inference, accessory-genome variation, functional screening, temporal diagnostics, and evidence synthesis in one reproducible analysis.
@@ -89,6 +90,8 @@ Each sample can provide either a local assembly path or an NCBI assembly accessi
 sample  assembly  accession  date  location  host
 ```
 
+Extra metadata columns are allowed and are retained in the run metadata and HTML report.
+
 Then update `samples:` in `config/config.yaml` to `config/samples.tsv`.
 
 ### 3. Inspect the planned run
@@ -107,6 +110,24 @@ The main report will be written to:
 
 ```text
 results/report/index.html
+```
+
+## Real-data example
+
+A curated 10-genome *Escherichia coli* O157:H7 validation panel is available in [`examples/ecoli_o157`](examples/ecoli_o157/README.md). It includes human/food outbreak reference isolates and cattle-associated isolates so the workflow can be exercised across SNP, recombination, accessory-genome, metadata, and temporal branches.
+
+All assembly identifiers in this example are public NCBI `GCF_` accessions. A dedicated GitHub Actions smoke test resolves and downloads every accession rather than relying on static placeholder files.
+
+The panel is a **workflow-validation dataset, not a single outbreak reconstruction**. Its isolates span different outbreaks, sources, countries, and years, so genomic proximity in this example must not be interpreted as direct transmission.
+
+Run the full example with:
+
+```bash
+snakemake \
+  --snakefile workflow/Snakefile \
+  --configfile examples/ecoli_o157/config.yaml \
+  --use-conda \
+  --cores 8
 ```
 
 ## Recombination modes
@@ -144,6 +165,7 @@ The root-to-tip screen is a diagnostic, not proof of a molecular clock. Date-ran
 PathogenPhyloFlow/
 ├── config/
 ├── docs/
+├── examples/
 ├── tests/
 ├── workflow/
 │   ├── envs/
