@@ -1,0 +1,131 @@
+name: End-to-end pathogen smoke test
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "examples/ecoli_o157/ci_samples.tsv"
+      - "examples/ecoli_o157/ci_config.yaml"
+      - "workflow/**"
+      - "environment.yaml"
+      - ".github/workflows/end-to-end-smoke.yml"
+  pull_request:
+    paths:
+      - "examples/ecoli_o157/ci_samples.tsv"
+      - "examples/ecoli_o157/ci_config.yaml"
+      - "workflow/**"
+      - "environment.yaml"
+      - ".github/workflows/end-to-end-smoke.yml"
+  workflow_dispatch:
+
+jobs:
+  integrated-four-genome-run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up workflow environment
+        uses: mamba-org/setup-micromamba@v2
+        with:
+          environment-file: environment.yaml
+          environment-name: pathogenphyloflow
+          cache-environment: true
+
+      - name: Cache rule environments
+        uses: actions/cache@v4
+        with:
+          path: .snakemake/conda
+          key: ${{ runner.os }}-pathogenphyloflow-${{ hashFiles('workflow/envs/*.yaml') }}
+
+      - name: Check deployment tools
+        shell: bash -el {0}
+        run: |
+          snakemake --version
+          conda --version
+          mamba --version
+
+      - name: Build rule environments
+        shell: bash -el {0}
+        run: |
+          snakemake \
+            --snakefile workflow/Snakefile \
+            --configfile examples/ecoli_o157/ci_config.yaml \
+            --cores 4 \
+            --use-conda \
+            --conda-frontend mamba \
+            --conda-create-envs-only
+
+      - name: Run integrated workflow
+        shell: bash -el {0}
+        run: |
+          snakemake \
+            --snakefile workflow/Snakefile \
+            --configfile examples/ecoli_o157/ci_config.yaml \
+            --cores 4 \
+            --use-conda \
+            --conda-frontend mamba \
+            --printshellcmds \
+            --show-failed-logs \
+            --rerun-incomplete
+
+      - name: Verify stable outputs
+        shell: bash -el {0}
+        run: |
+          test -s results/reference/reference_selection.json
+          test -s results/variants/core/core.full.aln
+          test -s results/phylogeny/raw.treefile
+          test -s results/recombination/mask_summary.json
+          test -s results/phylogeny/recombination_filtered.treefile
+          test -s results/phylogeny/final.treefile
+          test -s results/phylogeny/final.snp_dist.tsv
+          test -s results/accessory/panaroo/gene_presence_absence.Rtab
+          test -s results/integration/snp_accessory_discordance.tsv
+          test -s results/temporal/temporal_screen.json
+          test -s results/report/index.html
+          test -s results/report/summary.json
+
+      - name: Print scientific smoke summary
+        shell: bash -el {0}
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          def load(path):
+              return json.loads(Path(path).read_text(encoding="utf-8"))
+
+          ref = load("results/reference/reference_selection.json")
+          mask = load("results/recombination/mask_summary.json")
+          compare = load("results/phylogeny/tree_comparison.json")
+          discord = load("results/integration/snp_accessory_summary.json")
+          temporal = load("results/temporal/temporal_screen.json")
+
+          print("Reference:", ref.get("selected_sample"))
+          print("Masked fraction:", mask.get("masked_fraction"))
+          print("Normalized RF:", compare.get("normalized_robinson_foulds"))
+          print("Discordant pairs:", discord.get("flagged_pairs"))
+          print("Temporal status:", temporal.get("treetime_status"))
+          print("Temporal R2:", temporal.get("r2"))
+          PY
+
+      - name: Upload validation outputs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ecoli-o157-integrated-smoke-results
+          path: |
+            results/reference/reference_candidates.tsv
+            results/reference/reference_selection.json
+            results/phylogeny/*.treefile
+            results/phylogeny/tree_comparison.*
+            results/recombination/mask_summary.json
+            results/integration/snp_accessory_summary.json
+            results/integration/snp_accessory_discordance.tsv
+            results/temporal/temporal_screen.json
+            results/temporal/root_to_tip.tsv
+            results/report/index.html
+            results/report/summary.json
+            logs/**
+          if-no-files-found: warn
+          retention-days: 14
