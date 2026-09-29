@@ -9,6 +9,10 @@ reference:
 
 recombination:
   enabled: true
+  # Masking strategy for Gubbins-implicated intervals:
+  #   global    - mask the union of intervals in every sequence (conservative default)
+  #   per_taxon - mask each interval only in its implicated taxon (preserves signal)
+  masking: global
 
 accessory:
   enabled: true
@@ -44,3 +48,10 @@ resources:
   gubbins_threads: 4
   prokka_threads: 4
   panaroo_threads: 4
+  # Memory (MB) advertised to the scheduler per rule. snippy's samtools sort
+  # allocation is controlled separately by snippy_ram_gb (GB).
+  snippy_ram_gb: 8
+  gubbins_mem_mb: 16000
+  iqtree_mem_mb: 8000
+  prokka_mem_mb: 4000
+  panaroo_mem_mb: 16000

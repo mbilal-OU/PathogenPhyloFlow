@@ -5,6 +5,10 @@
 [![Public accession validation](https://github.com/mbilal-OU/PathogenPhyloFlow/actions/workflows/real-data-smoke.yml/badge.svg)](https://github.com/mbilal-OU/PathogenPhyloFlow/actions/workflows/real-data-smoke.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
+**Status:** 0.1.0 released — see [CHANGELOG.md](CHANGELOG.md); the `Unreleased` section tracks changes under development.
+
+*Maintained by [Muhammad Bilal](https://github.com/mbilal-OU) (Battistuzzi Lab, Oakland University) · mbilal@oakland.edu*
+
 **PathogenPhyloFlow** is a modular Snakemake workflow for integrated bacterial pathogen genomics. It combines core-SNP phylogeny, recombination-aware inference, accessory-genome variation, functional screening, temporal diagnostics, and reproducible reporting.
 
 The central idea is simple: **a pathogen tree should not be interpreted in isolation.**
@@ -98,10 +102,29 @@ See [Scientific guardrails](docs/SCIENTIFIC_GUARDRAILS.md).
 
 ## Quick start
 
+### Before you run
+
+- Run every command from the repository root: the Snakefile hardcodes
+  `configfile: "config/config.yaml"`, so relative paths resolve from there.
+- The first `--use-conda` run builds roughly nine per-rule Conda environments;
+  allow 30+ minutes on a fresh machine. Later runs reuse them.
+- Non-interactive shells need `mamba env create -y -f environment.yaml`
+  (otherwise mamba prompts for confirmation).
+- Resource expectations: Snippy allocates 8 GB RAM for `samtools sort` by
+  default — lower it on small machines with `resources.snippy_ram_gb`
+  (see [Configuration](#configuration)). Each rule also advertises
+  `threads` and `mem_mb` to the scheduler (see `config/config.yaml`).
+- `results/` is a single shared output root: a second run overwrites the
+  first. Copy `results/` aside (or point the workflow at a fresh clone) to
+  keep earlier outputs.
+- IQ-TREE's ultrafast bootstrap requires `phylogeny.bootstrap >= 1000`;
+  smaller values fail inside IQ-TREE.
+- Run the Python unit tests with `pytest tests/` from the repo root.
+
 ### 1. Create the workflow environment
 
 ```bash
-mamba env create -f environment.yaml
+mamba env create -y -f environment.yaml
 conda activate pathogenphyloflow
 ```
 
@@ -162,9 +185,23 @@ Recombination analysis is enabled in the default configuration so its effect can
 ```yaml
 recombination:
   enabled: true
+  masking: global
 ```
 
 PathogenPhyloFlow retains both raw and recombination-aware results and records how masking changes the alignment and phylogeny.
+
+### Masking strategies
+
+`recombination.masking` controls how Gubbins-implicated intervals are masked:
+
+| Strategy | Behaviour |
+|---|---|
+| `global` (default) | The union of all implicated intervals is masked with `N` in **every** sequence. Conservative: it can only remove phylogenetic signal, never create false signal, but it discards informative sites for taxa not involved in an event. This is the behaviour the workflow was validated against. |
+| `per_taxon` | Each interval is masked only in the taxon named in the GFF `seqname` column, preserving signal for uninvolved taxa — the same policy Gubbins applies to its own filtered alignment. |
+
+`results/recombination/mask_summary.json` records the strategy used, per-taxon
+masked counts, and the masked fraction, so the choice is always auditable.
+See [Scientific guardrails](docs/SCIENTIFIC_GUARDRAILS.md) for the rationale.
 
 ## Temporal modes
 
@@ -181,6 +218,30 @@ temporal:
 | `on` | Run TreeTime after basic date validation |
 
 The root-to-tip screen is a diagnostic, not proof of a molecular clock. Publication-grade phylodynamic inference may require stronger temporal validation.
+
+## Configuration
+
+All options live in `config/config.yaml` and are validated against
+`config/config.schema.yaml` at startup. Beyond the sections above:
+
+```yaml
+accessory:
+  # Panaroo gene-alignment mode: core | pan | none.
+  # "none" skips the alignment phase entirely (much faster); no downstream
+  # rule consumes the alignment, only the presence/absence matrices.
+  panaroo_alignment: core
+
+resources:
+  snippy_ram_gb: 8    # RAM (GB) Snippy passes to samtools sort; lower on small machines
+  gubbins_mem_mb: 16000
+  iqtree_mem_mb: 8000
+  prokka_mem_mb: 4000
+  panaroo_mem_mb: 16000
+```
+
+`resources.*_threads` set CPU threads per rule; `resources.*_mem_mb` advertise
+memory to the scheduler (used with `--resources` or cluster profiles, e.g.
+Snakemake's `--profile slurm`).
 
 ## Major outputs
 
@@ -241,6 +302,8 @@ The larger 10-genome tutorial is retained as the public demonstration dataset.
 ## Citation
 
 If you use the workflow in research, cite the software version or commit used. A [`CITATION.cff`](CITATION.cff) file is included for GitHub citation export.
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for how to report issues and contribute.
 
 ## License
 

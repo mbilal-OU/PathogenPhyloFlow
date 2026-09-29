@@ -6,6 +6,13 @@ rule snippy_sample:
         vcf="results/variants/snippy/{sample}/snps.vcf",
     threads:
         config["resources"]["snippy_threads"]
+    resources:
+        # Keep the scheduler-visible memory in sync with --ram above.
+        mem_mb=config["resources"].get("snippy_ram_gb", 8) * 1000,
+    params:
+        # Snippy defaults to 8 GB RAM for samtools sort; make it configurable
+        # so low-memory machines can run it. Default 8 preserves old behavior.
+        ram=config["resources"].get("snippy_ram_gb", 8),
     log:
         "logs/snippy/{sample}.log"
     conda:
@@ -18,6 +25,7 @@ rule snippy_sample:
           --ref {input.reference} \
           --ctgs {input.assembly} \
           --cpus {threads} \
+          --ram {params.ram} \
           --force > {log} 2>&1
         test -s {output.vcf}
         """
@@ -70,6 +78,8 @@ rule raw_iqtree:
         seed=config["phylogeny"]["seed"],
     threads:
         config["resources"]["iqtree_threads"]
+    resources:
+        mem_mb=config["resources"].get("iqtree_mem_mb", 8000),
     log:
         "logs/phylogeny/raw_iqtree.log"
     conda:

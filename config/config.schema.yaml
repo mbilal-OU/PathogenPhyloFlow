@@ -41,6 +41,10 @@ properties:
     properties:
       enabled:
         type: boolean
+      masking:
+        type: string
+        enum: [global, per_taxon]
+        default: global
   accessory:
     type: object
     additionalProperties: false
@@ -55,6 +59,10 @@ properties:
         type: number
         minimum: 0.5
         maximum: 1.0
+      panaroo_alignment:
+        type: string
+        enum: [core, pan, none]
+        default: core
   functional:
     type: object
     additionalProperties: false
@@ -137,3 +145,23 @@ properties:
       panaroo_threads:
         type: integer
         minimum: 1
+      snippy_ram_gb:
+        type: integer
+        minimum: 1
+        default: 8
+      gubbins_mem_mb:
+        type: integer
+        minimum: 100
+        default: 16000
+      iqtree_mem_mb:
+        type: integer
+        minimum: 100
+        default: 8000
+      prokka_mem_mb:
+        type: integer
+        minimum: 100
+        default: 4000
+      panaroo_mem_mb:
+        type: integer
+        minimum: 100
+        default: 16000
