@@ -5,6 +5,10 @@
 [![Public accession validation](https://github.com/mbilal-OU/PathogenPhyloFlow/actions/workflows/real-data-smoke.yml/badge.svg)](https://github.com/mbilal-OU/PathogenPhyloFlow/actions/workflows/real-data-smoke.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
+**Status:** 0.1.0 released — see [CHANGELOG.md](CHANGELOG.md); the `Unreleased` section tracks changes under development.
+
+*Maintained by [Muhammad Bilal](https://github.com/mbilal-OU) (Battistuzzi Lab, Oakland University) · mbilal@oakland.edu*
+
 **PathogenPhyloFlow** is a modular Snakemake workflow for integrated bacterial pathogen genomics. It combines core-SNP phylogeny, recombination-aware inference, accessory-genome variation, functional screening, temporal diagnostics, and reproducible reporting.
 
 The central idea is simple: **a pathogen tree should not be interpreted in isolation.**
@@ -298,6 +302,8 @@ The larger 10-genome tutorial is retained as the public demonstration dataset.
 ## Citation
 
 If you use the workflow in research, cite the software version or commit used. A [`CITATION.cff`](CITATION.cff) file is included for GitHub citation export.
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for how to report issues and contribute.
 
 ## License
 
