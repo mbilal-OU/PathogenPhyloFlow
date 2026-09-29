@@ -2,6 +2,16 @@
 
 All notable changes to PathogenPhyloFlow are documented here.
 
+## Unreleased
+
+### Real-data validation fixes (Sep 2026)
+
+End-to-end Snakemake validation on real pathogen genomes (10/10 workflow steps, exit 0). Genuine fixes found during the run:
+
+- Prokka rule failed when `SHELL` was unset (GNU parallel `--pipe` workers `exec("")` → ENOENT). Now defaults to `/bin/bash` via a `parallel_shell` rule parameter honoring `PARALLEL_SHELL` (`workflow/rules/accessory.smk`).
+- Panaroo gene alignment made optional via new `accessory.panaroo_alignment` config (`core`/`pan`/`none`, default `core`): no downstream rule consumes the alignment, only the presence/absence matrices.
+- Snippy's hard-coded 8 GB RAM allocation failed on smaller machines (`samtools sort` OOM). Now configurable via new `resources.snippy_ram_gb` config (default 8).
+
 ## 0.1.0 - 2026-08-30
 
 Initial public release.

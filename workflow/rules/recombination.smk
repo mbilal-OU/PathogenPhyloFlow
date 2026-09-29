@@ -9,6 +9,8 @@ if RECOMBINATION_ENABLED:
             tree="results/recombination/gubbins.final_tree.tre",
         threads:
             config["resources"]["gubbins_threads"]
+        resources:
+            mem_mb=config["resources"].get("gubbins_mem_mb", 16000),
         log:
             "logs/recombination/gubbins.log"
         conda:
@@ -58,6 +60,8 @@ if RECOMBINATION_ENABLED:
             seed=config["phylogeny"]["seed"],
         threads:
             config["resources"]["iqtree_threads"]
+        resources:
+            mem_mb=config["resources"].get("iqtree_mem_mb", 8000),
         log:
             "logs/phylogeny/recombination_filtered_iqtree.log"
         conda:
@@ -94,8 +98,10 @@ if RECOMBINATION_ENABLED:
             tree="results/phylogeny/final.treefile",
             alignment="results/phylogeny/final.aln",
             distances="results/phylogeny/final.snp_dist.tsv",
+        log:
+            "logs/phylogeny/finalize_phylogeny.log",
         shell:
-            "cp {input.tree} {output.tree} && cp {input.alignment} {output.alignment} && cp {input.distances} {output.distances}"
+            "mkdir -p $(dirname {log}) && cp {input.tree} {output.tree} && cp {input.alignment} {output.alignment} && cp {input.distances} {output.distances} > {log} 2>&1"
 
 else:
 
@@ -108,5 +114,7 @@ else:
             tree="results/phylogeny/final.treefile",
             alignment="results/phylogeny/final.aln",
             distances="results/phylogeny/final.snp_dist.tsv",
+        log:
+            "logs/phylogeny/finalize_phylogeny.log",
         shell:
-            "cp {input.tree} {output.tree} && cp {input.alignment} {output.alignment} && cp {input.distances} {output.distances}"
+            "mkdir -p $(dirname {log}) && cp {input.tree} {output.tree} && cp {input.alignment} {output.alignment} && cp {input.distances} {output.distances} > {log} 2>&1"

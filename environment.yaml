@@ -9,3 +9,4 @@ dependencies:
   - mamba
   - pyyaml
   - jsonschema
+  - pytest

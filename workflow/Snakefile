@@ -49,6 +49,7 @@ REPORT_INPUTS = [
     "results/phylogeny/final.aln",
     "results/phylogeny/final.snp_dist.tsv",
     "results/temporal/temporal_screen.json",
+    "results/report/software_versions.json",
 ]
 
 if RECOMBINATION_ENABLED:
@@ -76,6 +77,7 @@ rule all:
         "results/report/index.html",
         "results/report/summary.json",
         "results/report/config.resolved.json",
+        "results/report/software_versions.json",
 
 
 include: "rules/input.smk"
@@ -85,4 +87,5 @@ include: "rules/recombination.smk"
 include: "rules/accessory.smk"
 include: "rules/functional.smk"
 include: "rules/temporal.smk"
+include: "rules/versions.smk"
 include: "rules/report.smk"
